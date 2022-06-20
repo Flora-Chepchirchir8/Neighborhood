@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .forms import ProfileForm,HoodForm,BusinessForm,PostForm
 from django.contrib.auth.decorators import login_required
 
+
 # Create your views here.
 def welcome(request):
     

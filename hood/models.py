@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
 from tinymce.models import HTMLField
 
+
 # Create your models here.
    
 

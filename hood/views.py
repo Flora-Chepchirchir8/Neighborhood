@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect,get_object_or_404,HttpResponse, Http404, HttpResponseRedirect
 from .models import Profile,NeighbourHood,Business,Post
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ObjectDoesNotExist
-from .forms import ProfileForm,HoodForm,BusinessForm,PostForm
+from .forms import ProfileForm,HoodForm,BusinessForm,PostForm, UserRegisterForm
 from django.contrib.auth.decorators import login_required
 
 
@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 def welcome(request):
     
     return render(request, 'welcome.html')
-@login_required(login_url='/accounts/login/')
+
 def index(request):
     current_user = request.user
     profiles = Profile.objects.filter(id = current_user.id).all()
@@ -98,7 +98,7 @@ def createbusiness(request, id):
     return render(request,'business.html',{'hood':hood, 'form':form})
  
 
-@login_required(login_url='/accounts/login/')
+
 def post(request, hood_id):
     hood = NeighbourHood.objects.get(id=hood_id)
     current_user = request.user
@@ -114,7 +114,7 @@ def post(request, hood_id):
             form = PostForm()
     return render(request,'post.html',{'hood':hood, 'form':form})
 
-@login_required(login_url='/accounts/login/')
+
 def search_results(request):
   if 'business' in request.GET and request.GET["business"]:
     search_term = request.GET.get('business')
@@ -126,7 +126,48 @@ def search_results(request):
     return render(request,'search.html',{"message":message,"results":searched_users})
 
 
-@login_required(login_url='login')
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+         login(request, user)
+         return redirect('homepage')
+        
+        else:
+            messages.success(request,('Invalid information'))
+            return redirect('login')
+         
+    else:
+
+     return render(request,'registration/login.html')
+
+def register_user(request):
+    if request.method == 'POST':
+         form = UserRegisterForm(request.POST)
+         if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            
+            email = form.cleaned_data['email']
+            # send_welcome_email(username,email) 
+
+            user = authenticate(username=username, password=password)
+            login(request,user)
+         
+            return redirect('update_profile')
+    else:
+         form = UserRegisterForm()
+    return render (request,'registration/register.html',{'form':form})
+
+
+@login_required
 def logout_user(request):
     logout(request)
-    return redirect('welcome')
+    return HttpResponseRedirect(reverse("login"))
+# @login_required(login_url='login')
+# def logout_user(request):
+#     logout(request)
+#     return redirect('welcome')

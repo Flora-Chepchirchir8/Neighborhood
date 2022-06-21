@@ -23,8 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.welcome, name='welcome'),
     path('index',views.index, name='index'),
-    path('accounts/', include('django_registration.backends.one_step.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
+    # path('accounts/', include('django_registration.backends.one_step.urls')),
+    # path('accounts/', include('django.contrib.auth.urls')),
     path('profile-update',views.update_profile, name='update_profile'),
     path('profile/<pk>',views.profile, name = 'profile'),
     path('create-hood',views.createhood, name='createhood'), 
@@ -34,7 +34,11 @@ urlpatterns = [
     path('post/<hood_id>',views.post, name = 'post'),
     path('change_neighbourhood/<id>', views.change_neighbourhood, name='change-neighbourhood'),
     path('search/',views.search_results, name='search_results'),
+    path('register/',views.register_user,name='register'),
+    path('accounts/login/',views.login_user,name='login'),
     path('logout/', views.logout_user, name='logout'),
+    path('tinymce/', include('tinymce.urls')),
+    # path('logout/', views.logout_user, name='logout'),
 
 
 ]
